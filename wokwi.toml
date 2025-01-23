@@ -1,0 +1,4 @@
+[wokwi]
+version = 1
+firmware = 'build/Matriz_LED_RGB.uf2'
+elf = 'build/Matriz_LED_RGB.elf'
