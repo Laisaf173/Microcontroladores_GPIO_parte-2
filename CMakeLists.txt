@@ -35,7 +35,9 @@ pico_sdk_init()
 
 # Add executable. Default name is the project name, version 0.1
 
-add_executable(Matriz_LED_RGB Matriz_LED_RGB.c )
+add_executable(Matriz_LED_RGB 
+    Matriz_LED_RGB.c
+    pio_matrix.pio)
 
 pico_set_program_name(Matriz_LED_RGB "Matriz_LED_RGB")
 pico_set_program_version(Matriz_LED_RGB "0.1")
