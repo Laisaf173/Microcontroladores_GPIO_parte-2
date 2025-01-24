@@ -89,6 +89,7 @@ void controle_animacoes(char key) {
         case 'A': // Desligar todos os LEDs
             break;
         case 'B': // Acionamento de todos os LEDs em azul - intensidade 100%
+            acender_leds(0, 0, 1);
             break;
         case 'C': // Acionamento de todos os LEDs em vermelho - intensidade 80%
             break;
@@ -196,6 +197,14 @@ void desenho_pio(double *dados, PIO pio, uint sm, double vr, double vg, double v
             (uint8_t)(intensidade * vb)
         );
         
+        pio_sm_put_blocking(pio, sm, cor);
+    }
+}
+
+//funçao para acender os leds
+void acender_leds(double r, double g, double b) {
+    for (int i = 0; i < NUM_PIXELS; i++) {
+        uint32_t cor = matrix_rgb(b, r, g);
         pio_sm_put_blocking(pio, sm, cor);
     }
 }
