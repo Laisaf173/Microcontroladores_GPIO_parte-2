@@ -46,7 +46,9 @@ pico_enable_stdio_usb(Matriz_LED_RGB 1)
 
 pico_generate_pio_header(Matriz_LED_RGB ${CMAKE_CURRENT_LIST_DIR}/pio_matrix.pio)
 
-target_sources(Matriz_LED_RGB PRIVATE Matriz_LED_RGB.c)
+target_sources(Matriz_LED_RGB PRIVATE
+        Matriz_LED_RGB.c
+        cobrinha.c)
 
 # Add the standard library to the build
 target_link_libraries(Matriz_LED_RGB PRIVATE
