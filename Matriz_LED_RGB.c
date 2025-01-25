@@ -99,6 +99,7 @@ void controle_animacoes(char key) {
         case '7': // Animação 8
             break;
         case 'A': // Desligar todos os LEDs
+            acender_leds(0, 0, 0);
             break;
         case 'B': // Acionamento de todos os LEDs em azul - intensidade 100%
             acender_leds(0, 0, 1);
