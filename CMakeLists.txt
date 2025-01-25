@@ -35,7 +35,9 @@ pico_sdk_init()
 
 # Add executable. Default name is the project name, version 0.1
 
-add_executable(Matriz_LED_RGB Matriz_LED_RGB.c )
+add_executable(Matriz_LED_RGB 
+    Matriz_LED_RGB.c
+    pio_matrix.pio)
 
 pico_set_program_name(Matriz_LED_RGB "Matriz_LED_RGB")
 pico_set_program_version(Matriz_LED_RGB "0.1")
@@ -46,7 +48,9 @@ pico_enable_stdio_usb(Matriz_LED_RGB 1)
 
 pico_generate_pio_header(Matriz_LED_RGB ${CMAKE_CURRENT_LIST_DIR}/pio_matrix.pio)
 
-target_sources(Matriz_LED_RGB PRIVATE Matriz_LED_RGB.c)
+target_sources(Matriz_LED_RGB PRIVATE
+        Matriz_LED_RGB.c
+        cobrinha.c)
 
 # Add the standard library to the build
 target_link_libraries(Matriz_LED_RGB PRIVATE
