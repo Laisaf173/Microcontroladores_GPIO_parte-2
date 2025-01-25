@@ -6,7 +6,6 @@
 
 #if !PICO_NO_HARDWARE
 #include "hardware/pio.h"
-#include "hardware/clocks.h"  // Adicionada a inclusão para utilizar clock_get_hz
 #endif
 
 // ---------- //
@@ -22,7 +21,7 @@ static const uint16_t pio_matrix_program_instructions[] = {
     0x6021, //  0: out    x, 1                       
     0x0024, //  1: jmp    !x, 4                      
     0xe401, //  2: set    pins, 1                [4] 
-    0x0006, //  3: jmp    6                           
+    0x0006, //  3: jmp    6                          
     0xe201, //  4: set    pins, 1                [2] 
     0xe200, //  5: set    pins, 0                [2] 
     0xe100, //  6: set    pins, 0                [1] 
@@ -46,6 +45,7 @@ static inline pio_sm_config pio_matrix_program_get_default_config(uint offset) {
     return c;
 }
 
+#include "hardware/clocks.h"
 static inline void pio_matrix_program_init(PIO pio, uint sm, uint offset, uint pin)
 {
     pio_sm_config c = pio_matrix_program_get_default_config(offset);
@@ -56,7 +56,7 @@ static inline void pio_matrix_program_init(PIO pio, uint sm, uint offset, uint p
     // Set pin direction to output at the PIO
     pio_sm_set_consecutive_pindirs(pio, sm, pin, 1, true);
     // Set pio clock to 8MHz, giving 10 cycles per LED binary digit
-    float div = clock_get_hz(clk_sys) / 8000000.0;  // Agora está correto
+    float div = clock_get_hz(clk_sys) / 8000000.0;
     sm_config_set_clkdiv(&c, div);
     // Give all the FIFO space to TX (not using RX)
     sm_config_set_fifo_join(&c, PIO_FIFO_JOIN_TX);
@@ -71,3 +71,4 @@ static inline void pio_matrix_program_init(PIO pio, uint sm, uint offset, uint p
 }
 
 #endif
+
