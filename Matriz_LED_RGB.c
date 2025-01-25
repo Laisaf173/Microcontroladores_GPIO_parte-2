@@ -63,21 +63,18 @@ char read_key(void);
 // Funções de controle dos LEDs
 void desenho_pio(double *dados, PIO pio, uint sm, double vr, double vg, double vb);
 
-// Função para exibir um número nos LEDs
-void exibir_numero(int numero);
-
 // Função que simula um coração pulsante 
-void heart_beat_animation(PIO pio, uint sm);
+void coracao_pulsante(PIO pio, uint sm);
 
 // Funções de controle dos LEDs
 void controle_animacoes(char key) {
     switch (key) {
-        case '0': // Animação de contagem regressiva
-            heart_beat_animation(pio, sm);
+        case '0': // Animação 1
+            coracao_pulsante(pio, sm);
             break;
         case '1': // Animação 2
             break; 
-        case '2':  // Animação 3
+        case '2': // Animação 3
             break;
         case '3': // Animação 4
             break;
@@ -132,7 +129,7 @@ double coracao_grande[25] = {
     0, 0, 1, 0, 0
 };
 
-void heart_beat_animation(PIO pio, uint sm) {
+void coracao_pulsante(PIO pio, uint sm) {
     // Array de cores (R, G, B)
     float cores[5][3] = {
         {1.0, 0.0, 0.0}, // Vermelho
