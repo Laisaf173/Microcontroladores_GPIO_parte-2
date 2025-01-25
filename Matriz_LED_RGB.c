@@ -14,14 +14,11 @@ static PIO pio = pio0;
 static uint offset; 
 static uint sm;
 
-
-
 //número de LEDs
 #define NUM_PIXELS 25
 
 //pino de saída
 #define OUT_PIN 7
-
 
 #define ROWS 4
 #define COLS 4
@@ -45,7 +42,6 @@ int matriz_mapeamento_LEDS[25] = {
 uint GPIO_COLS[4] = {28, 27, 26, 22}; 
 uint GPIO_ROWS[4] = {0, 1, 2, 3};
 
-
 //Buzzer
 const uint GPIO_BUZZER = 21;
 
@@ -67,10 +63,17 @@ char read_key(void);
 // Funções de controle dos LEDs
 void desenho_pio(double *dados, PIO pio, uint sm, double vr, double vg, double vb);
 
+// Função para exibir um número nos LEDs
+void exibir_numero(int numero);
+
+// Função que simula um coração pulsante 
+void heart_beat_animation(PIO pio, uint sm);
+
 // Funções de controle dos LEDs
 void controle_animacoes(char key) {
     switch (key) {
-        case '0': // Animação 1
+        case '0': // Animação de contagem regressiva
+            heart_beat_animation(pio, sm);
             break;
         case '1': // Animação 2
             break; 
@@ -104,6 +107,65 @@ void controle_animacoes(char key) {
     }
 }
 
+// Padrão do coração ajustado para 5x5
+double coracao_pequeno[25] = {
+    0, 0, 0, 0, 0,
+    0, 1, 0, 1, 0,
+    0, 1, 1, 1, 0,
+    0, 0, 1, 0, 0,
+    0, 0, 0, 0, 0
+};
+
+double coracao_medio[25] = {
+    0, 1, 0, 1, 0,
+    1, 1, 1, 1, 1,
+    0, 1, 1, 1, 0,
+    0, 1, 1, 1, 0,
+    0, 0, 1, 0, 0
+};
+
+double coracao_grande[25] = {
+    1, 1, 0, 1, 1,
+    1, 1, 1, 1, 1,
+    1, 1, 1, 1, 1,
+    0, 1, 1, 1, 0,
+    0, 0, 1, 0, 0
+};
+
+void heart_beat_animation(PIO pio, uint sm) {
+    // Array de cores (R, G, B)
+    float cores[5][3] = {
+        {1.0, 0.0, 0.0}, // Vermelho
+        {0.0, 1.0, 0.0}, // Verde
+        {0.0, 0.0, 1.0}, // Azul
+        {1.0, 1.0, 0.0}, // Amarelo
+        {1.0, 0.0, 1.0}  // Magenta
+    };
+
+    // Simula 5 batidas de coração
+    for(int beat = 0; beat < 5; beat++) {
+        // Seleciona a cor atual
+        float *cor_atual = cores[beat % 5];
+
+        // Pulso rápido para cima
+        desenho_pio(coracao_pequeno, pio, sm, cor_atual[0], cor_atual[1], cor_atual[2]);
+        sleep_ms(100);
+        desenho_pio(coracao_medio, pio, sm, cor_atual[0], cor_atual[1], cor_atual[2]);
+        sleep_ms(100);
+        desenho_pio(coracao_grande, pio, sm, cor_atual[0], cor_atual[1], cor_atual[2]);
+        sleep_ms(100);
+        
+        // Pulso rápido para baixo
+        desenho_pio(coracao_medio, pio, sm, cor_atual[0], cor_atual[1], cor_atual[2]);
+        sleep_ms(100);
+        desenho_pio(coracao_pequeno, pio, sm, cor_atual[0], cor_atual[1], cor_atual[2]);
+        sleep_ms(100);
+        
+        // Pausa entre batidas
+        desenho_pio(coracao_pequeno, pio, sm, cor_atual[0] * 0.5, cor_atual[1] * 0.5, cor_atual[2] * 0.5); // Mais fraco
+        sleep_ms(300);
+    }
+}
 
 int main() {
     pio = pio0; 
@@ -199,3 +261,4 @@ void desenho_pio(double *dados, PIO pio, uint sm, double vr, double vg, double v
         pio_sm_put_blocking(pio, sm, cor);
     }
 }
+
