@@ -12,10 +12,9 @@
 //arquivo .pio
 #include "pio_matrix.pio.h"
 
-
-static PIO pio = pio0;
-static uint offset; 
-static uint sm;
+PIO pio;
+uint32_t sm;
+static uint offset;
 
 //número de LEDs
 #define NUM_PIXELS 25
