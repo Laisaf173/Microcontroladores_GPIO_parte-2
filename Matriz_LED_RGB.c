@@ -95,8 +95,9 @@ void controle_animacoes(char key) {
         case '2': // círculo expandindo
             desenhar_circulo(pio, sm);
             break;
-        case '3': // Animação 4
-            break;
+          case '3': // Espiral Crescente
+            animacao_espiral();
+             break;
         case '4': // Animação 5 
             break;
         case '5': // Animação 6
@@ -114,7 +115,8 @@ void controle_animacoes(char key) {
         case 'C': // Acionamento de todos os LEDs em vermelho - intensidade 80%
             acender_leds(0.8, 0, 0);
             break;
-        case 'D': // Acionamento de todos os LEDs em verde - intensidade 50%
+         case 'D': // Acionamento de todos os LEDs em verde - intensidade 50%
+              acender_leds(0, 0.5, 0); // Verde com 50% de intensidade
             break;
         case '#': // Acionamento de todos os LEDs em branco - intensidade 20%
             break;
@@ -335,5 +337,30 @@ void desenho_pio(double *dados, PIO pio, uint sm, double vr, double vg, double v
         
         pio_sm_put_blocking(pio, sm, cor);
     }
+}
+
+void animacao_espiral() {
+    // Ordem para acender os LEDs em espiral (mapeamento para a matriz 5x5)
+    int espiral[25] = {
+        12, 7, 6, 5, 4, 
+        13, 8, 1, 0, 3,
+        14, 9, 2, 11, 10,
+        15, 20, 21, 22, 23,
+        16, 17, 18, 19, 24
+    };
+
+    // Definição da cor (exemplo: verde claro)
+    double red = 0.0, green = 0.8, blue = 0.0;
+
+    // Acende os LEDs em ordem espiral com um pequeno delay entre cada LED
+    for (int i = 0; i < 25; i++) {
+        double padrao[25] = {0};  // Matriz inicializada com 0 (apagada)
+        padrao[espiral[i]] = 1.0; // Acende o LED correspondente na sequência
+        desenho_pio(padrao, pio, sm, red, green, blue);
+        sleep_ms(100); // Delay entre os frames
+    }
+
+    // Apaga os LEDs no final da animação
+    acender_leds(0, 0, 0);
 }
 
