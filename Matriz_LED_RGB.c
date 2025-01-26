@@ -51,7 +51,7 @@ const uint GPIO_BUZZER = 21;
 void imprimir_binario(int num); 
 
 //rotina para definição da intensidade de cores do led
-uint32_t matrix_rgb(double b, double r, double g);
+uint32_t matrix_rgb(double r, double g, double b);
 
 //Configurar os pinos
 void init_gpio(void);
@@ -71,10 +71,12 @@ void coracao_pulsante(PIO pio, uint sm);
 //funçao para acender os leds
 void acender_leds(double r, double g, double b) {
     for (int i = 0; i < NUM_PIXELS; i++) {
-        uint32_t cor = matrix_rgb(b, r, g);
+        uint32_t cor = matrix_rgb(r, g, b);
         pio_sm_put_blocking(pio, sm, cor);
     }
 }
+
+
 
 
 // Funções de controle dos LEDs
@@ -96,7 +98,8 @@ void controle_animacoes(char key) {
             break;
         case '6': // Animação 7
             break;
-        case '7': // Animação 8
+        case '7': // Ativar a onda azul
+            animacao_onda_verde();
             break;
         case 'A': // Desligar todos os LEDs
             acender_leds(0, 0, 0);
@@ -208,12 +211,12 @@ void imprimir_binario(int num) {
 }
 
 //rotina para definição da intensidade de cores do led
-uint32_t matrix_rgb(double b, double r, double g){
+uint32_t matrix_rgb(double r, double g, double b){
     unsigned char R, G, B;
     R = r * 255;
     G = g * 255;
     B = b * 255;
-    return (G << 24) | (R << 16) | (B << 8);
+    return (R << 24) | (G << 16) | (B << 8);
 }
 
 //Configurar os pinos
