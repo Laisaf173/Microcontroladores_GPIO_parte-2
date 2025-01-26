@@ -9,6 +9,8 @@
 #include "animacoes.h"
 #include "hardware/clocks.h"
 
+
+
 //arquivo .pio
 #include "pio_matrix.pio.h"
 
@@ -103,7 +105,8 @@ void controle_animacoes(char key) {
             break;
         case '6': // Animação 7
             break;
-        case '7': // Animação 8
+         case '7': // Aciona a animação de onda alternada
+            onda_alternada(pio, sm);
             break;
         case 'A': // Desligar todos os LEDs
             acender_leds(0, 0, 0);
