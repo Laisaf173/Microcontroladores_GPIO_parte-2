@@ -191,17 +191,18 @@ double seta[25] = {
     1, 1, 1, 1, 0,
     0, 0, 0, 1, 0
 };
-void animacao_seta(PIO pio, uint sm) {
 
+void animacao_seta(PIO pio, uint sm) {
+    
     float cores[5][3] = {
         {1.0, 1.0, 1.0}, 
         {1.0, 0.8, 0.8}, 
-        {1.0, 0.6, 0.6},
+        {1.0, 0.6, 0.6}, 
         {1.0, 0.4, 0.4}, 
         {1.0, 0.0, 0.0}  
     };
 
-    
+    // Padrão de seta ajustado para 5x5
     double seta[25] = {
         0, 0, 0, 1, 0,
         0, 0, 1, 1, 0,
@@ -212,7 +213,7 @@ void animacao_seta(PIO pio, uint sm) {
 
     // Posições para mover a seta dentro da matriz 5x5
     int posicoes[5][2] = {
-        {0, 0}, {0, 2}, {2, 0}, {2, 2}, {4, 0}
+        {0, 0}, {0, 1}, {0, 2}, {1, 0}, {1, 1}
     };
 
     // Loop para mudar as cores e posições automaticamente 5 vezes
@@ -225,15 +226,17 @@ void animacao_seta(PIO pio, uint sm) {
             double matriz[25] = {0};
 
             // Posição atual da seta
-            int linha = posicoes[cycle][0];
-            int coluna = posicoes[cycle][1];
+            int linha_inicio = posicoes[cycle][0];
+            int coluna_inicio = posicoes[cycle][1];
 
             // Desenha a seta na posição atual
             for (int i = 0; i < 5; i++) {
                 for (int j = 0; j < 5; j++) {
-                    int index = (linha + i) * 5 + (coluna + j);
-                    if (index < 25) {
-                        matriz[index] = seta[i * 5 + j];
+                    if (seta[i * 5 + j] == 1) {
+                        int index = (linha_inicio + i) * 5 + (coluna_inicio + j);
+                        if (index < 25) {
+                            matriz[index] = 1;
+                        }
                     }
                 }
             }
@@ -244,7 +247,6 @@ void animacao_seta(PIO pio, uint sm) {
         }
     }
 }
-
 
 
 
