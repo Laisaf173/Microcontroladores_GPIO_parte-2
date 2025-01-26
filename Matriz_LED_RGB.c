@@ -339,19 +339,49 @@ void desenho_pio(double *dados, PIO pio, uint sm, double vr, double vg, double v
     }
 }
 
-void animacao_espiral(PIO pio, uint sm) {
+void espiral_animacao(PIO pio, uint sm) {
+    // Ordem dos LEDs em formato espiral para a matriz 5x5
     int ordem_espiral[25] = {
-        12, 11, 10, 9, 8,
-        13, 24, 23, 22, 7,
-        14, 15, 16, 21, 6,
-        3, 2, 1, 20, 5,
-        4, 17, 18, 19, 0
+        12, 7, 8, 9, 14, 
+        13, 18, 23, 22, 21, 
+        16, 11, 6, 1, 0, 
+        5, 10, 15, 20, 19, 
+        24, 17, 2, 3, 4
     };
 
-    for (int passo = 0; passo < 25; passo++) {
-        double padrao[25] = {0};
-        padrao[ordem_espiral[passo]] = 1.0; // Ativa o LED na posição da espiral
-        desenho_pio(padrao, pio, sm, 1.0, 1.0, 0.0); // Amarelo
-        sleep_ms(100);
+    // Array de cores para a animação
+    float cores[5][3] = {
+        {1.0, 0.0, 0.0}, // Vermelho
+        {0.0, 1.0, 0.0}, // Verde
+        {0.0, 0.0, 1.0}, // Azul
+        {1.0, 1.0, 0.0}, // Amarelo
+        {1.0, 0.0, 1.0}  // Magenta
+    };
+
+    // Loop para executar a animação 3 vezes
+    for (int loop = 0; loop < 3; loop++) {
+        // Cor da iteração atual
+        float *cor_atual = cores[loop % 5];
+
+        // Liga os LEDs na ordem da espiral
+        for (int i = 0; i < 25; i++) {
+            double padrao[25] = {0};
+            padrao[ordem_espiral[i]] = 1.0; // Ativa o LED da posição da espiral
+
+            // Envia o padrão para a matriz
+            desenho_pio(padrao, pio, sm, cor_atual[0], cor_atual[1], cor_atual[2]);
+            sleep_ms(100); // Pausa entre as ativações
+        }
+
+        // Apaga os LEDs em ordem reversa
+        for (int i = 24; i >= 0; i--) {
+            double padrao[25] = {0};
+            padrao[ordem_espiral[i]] = 1.0;
+
+            // Envia o padrão para a matriz com intensidade menor
+            desenho_pio(padrao, pio, sm, cor_atual[0] * 0.5, cor_atual[1] * 0.5, cor_atual[2] * 0.5);
+            sleep_ms(100);
+        }
     }
 }
+
