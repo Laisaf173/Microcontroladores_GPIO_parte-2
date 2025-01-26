@@ -251,6 +251,7 @@ void animacao_seta(PIO pio, uint sm) {
 
 
 
+
 int main() {
     pio = pio0; 
     offset = pio_add_program(pio, &pio_matrix_program);
