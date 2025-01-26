@@ -193,13 +193,27 @@ double seta[25] = {
 };
 
 void animacao_seta(PIO pio, uint sm) {
-    // Array de cores (R, G, B)
-    float cores[3] = {1.0, 1.0, 1.0}; // Branco
-    
-    // Desenho da seta
-    desenho_pio(seta, pio, sm, cores[0], cores[1], cores[2]);
-    sleep_ms(100);
+  
+    float cores[5][3] = {
+        {1.0, 1.0, 1.0}, 
+        {1.0, 0.8, 0.8}, 
+        {1.0, 0.6, 0.6}, 
+        {1.0, 0.4, 0.4}, 
+        {1.0, 0.0, 0.0}  
+    };
+
+    // Simula 5 pulsos de seta
+    for (int pulse = 0; pulse < 5; pulse++) {
+        // Seleciona a cor atual
+        float *cor_atual = cores[pulse];
+
+        // Desenho da seta com a cor atual
+        desenho_pio(seta, pio, sm, cor_atual[0], cor_atual[1], cor_atual[2]);
+        sleep_ms(100); // Pausa entre os pulsos
+    }
 }
+
+
 
 int main() {
     pio = pio0; 
