@@ -95,8 +95,9 @@ void controle_animacoes(char key) {
         case '2': // círculo expandindo
             desenhar_circulo(pio, sm);
             break;
-          case '3': // Espiral Crescente
-            animacao_espiral();
+      case '3': // Animação espiral
+            espiral_animacao(pio, sm);
+             break;
              break;
         case '4': // Animação 5 
             break;
