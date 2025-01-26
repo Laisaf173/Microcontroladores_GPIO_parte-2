@@ -68,6 +68,9 @@ void desenho_pio(double *dados, PIO pio, uint sm, double vr, double vg, double v
 // Função que simula um coração pulsante 
 void coracao_pulsante(PIO pio, uint sm);
 
+// Função para desenhar uma seta
+void animacao_seta(PIO pio, uint sm);
+
 //funçao para acender os leds
 void acender_leds(double r, double g, double b) {
     for (int i = 0; i < NUM_PIXELS; i++) {
@@ -75,7 +78,6 @@ void acender_leds(double r, double g, double b) {
         pio_sm_put_blocking(pio, sm, cor);
     }
 }
-
 
 // Funções de controle dos LEDs
 void controle_animacoes(char key) {
@@ -92,7 +94,8 @@ void controle_animacoes(char key) {
             break;
         case '4': // Animação 5 
             break;
-        case '5': // Animação 6
+        case '5': // Animação de seta
+            animacao_seta(pio, sm);
             break;
         case '6': // Animação 7
             break;
@@ -109,6 +112,7 @@ void controle_animacoes(char key) {
         case 'D': // Acionamento de todos os LEDs em verde - intensidade 50%
             break;
         case '#': // Acionamento de todos os LEDs em branco - intensidade 20%
+            acender_leds(0.2, 0.2, 0.2);
             break;
         case '*': // Reboot do sistema
             reset_usb_boot(0, 0);
@@ -177,6 +181,24 @@ void coracao_pulsante(PIO pio, uint sm) {
         desenho_pio(coracao_pequeno, pio, sm, cor_atual[0] * 0.5, cor_atual[1] * 0.5, cor_atual[2] * 0.5); // Mais fraco
         sleep_ms(300);
     }
+}
+
+// Padrão de seta ajustado para 5x5
+double seta[25] = {
+    0, 0, 0, 1, 0,
+    0, 0, 1, 1, 0,
+    0, 1, 1, 1, 0,
+    1, 1, 1, 1, 0,
+    0, 0, 0, 1, 0
+};
+
+void animacao_seta(PIO pio, uint sm) {
+    // Array de cores (R, G, B)
+    float cores[3] = {1.0, 1.0, 1.0}; // Branco
+    
+    // Desenho da seta
+    desenho_pio(seta, pio, sm, cores[0], cores[1], cores[2]);
+    sleep_ms(100);
 }
 
 int main() {
@@ -260,7 +282,6 @@ char read_key(void) {
     return '\0'; // Retorna nulo se nenhuma tecla for pressionada
 }
 
-
 void desenho_pio(double *dados, PIO pio, uint sm, double vr, double vg, double vb) {
     for (int px = 0; px < NUM_PIXELS; px++) {
         uint16_t pos = matriz_mapeamento_LEDS[px]; // Obtém posição real no strip
@@ -275,4 +296,3 @@ void desenho_pio(double *dados, PIO pio, uint sm, double vr, double vg, double v
         pio_sm_put_blocking(pio, sm, cor);
     }
 }
-
