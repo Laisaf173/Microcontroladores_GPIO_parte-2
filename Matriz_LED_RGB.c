@@ -339,28 +339,19 @@ void desenho_pio(double *dados, PIO pio, uint sm, double vr, double vg, double v
     }
 }
 
-void animacao_espiral() {
-    // Ordem para acender os LEDs em espiral (mapeamento para a matriz 5x5)
-    int espiral[25] = {
-        12, 7, 6, 5, 4, 
-        13, 8, 1, 0, 3,
-        14, 9, 2, 11, 10,
-        15, 20, 21, 22, 23,
-        16, 17, 18, 19, 24
+void animacao_espiral(PIO pio, uint sm) {
+    int ordem_espiral[25] = {
+        12, 11, 10, 9, 8,
+        13, 24, 23, 22, 7,
+        14, 15, 16, 21, 6,
+        3, 2, 1, 20, 5,
+        4, 17, 18, 19, 0
     };
 
-    // Definição da cor (exemplo: verde claro)
-    double red = 0.0, green = 0.8, blue = 0.0;
-
-    // Acende os LEDs em ordem espiral com um pequeno delay entre cada LED
-    for (int i = 0; i < 25; i++) {
-        double padrao[25] = {0};  // Matriz inicializada com 0 (apagada)
-        padrao[espiral[i]] = 1.0; // Acende o LED correspondente na sequência
-        desenho_pio(padrao, pio, sm, red, green, blue);
-        sleep_ms(100); // Delay entre os frames
+    for (int passo = 0; passo < 25; passo++) {
+        double padrao[25] = {0};
+        padrao[ordem_espiral[passo]] = 1.0; // Ativa o LED na posição da espiral
+        desenho_pio(padrao, pio, sm, 1.0, 1.0, 0.0); // Amarelo
+        sleep_ms(100);
     }
-
-    // Apaga os LEDs no final da animação
-    acender_leds(0, 0, 0);
 }
-
