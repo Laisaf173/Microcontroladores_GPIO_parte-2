@@ -68,6 +68,12 @@ void desenho_pio(double *dados, PIO pio, uint sm, double vr, double vg, double v
 // Função que simula um coração pulsante 
 void coracao_pulsante(PIO pio, uint sm);
 
+// Função para criar padrão de círculo
+void criar_circulo(double *padrao, int raio);   
+
+// Função para desenhar o padrão de círculo no PIO  
+void desenhar_circulo(PIO pio, uint sm);    
+
 //funçao para acender os leds
 void acender_leds(double r, double g, double b) {
     for (int i = 0; i < NUM_PIXELS; i++) {
