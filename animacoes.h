@@ -8,6 +8,7 @@ extern uint32_t sm;
 
 void animacao_cobrinha();
 void desenha_frame();
+void animacao_espiral();
 // Funçao de outras animacoes devem ser adicionadas aqui
 
 #endif
