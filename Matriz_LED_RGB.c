@@ -78,6 +78,9 @@ void criar_circulo(double *padrao, int raio);
 // Função para desenhar o padrão de círculo no PIO  
 void desenhar_circulo(PIO pio, uint sm);    
 
+// Função para desenhar uma espiral
+void espiral_animacao(PIO pio, uint sm);
+
 //funçao para acender os leds
 void acender_leds(double r, double g, double b) {
     for (int i = 0; i < NUM_PIXELS; i++) {
@@ -98,10 +101,9 @@ void controle_animacoes(char key) {
         case '2': // círculo expandindo
             desenhar_circulo(pio, sm);
             break;
-    case '3': // Animação espiral
-    espiral_animacao(pio, sm);
-    break;
-
+        case '3': // Animação espiral
+            espiral_animacao(pio, sm);
+            break;
         case '4': // Animação 5 
             break;
         case '5': //  Animação de seta pulsante com mudança automática de cores
@@ -378,6 +380,7 @@ void desenho_pio(double *dados, PIO pio, uint sm, double vr, double vg, double v
     }
 }
 
+// Função para desenhar uma espiral
 void espiral_animacao(PIO pio, uint sm) {
     // Ordem correta para formar uma espiral
     int ordem_espiral[25] = {
