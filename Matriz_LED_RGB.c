@@ -81,6 +81,9 @@ void desenhar_circulo(PIO pio, uint sm);
 // Função para desenhar uma espiral
 void espiral_animacao(PIO pio, uint sm);
 
+//Função quadrado crescente
+void quadrado_crescente(PIO pio, uint sm);
+
 //funçao para acender os leds
 void acender_leds(double r, double g, double b) {
     for (int i = 0; i < NUM_PIXELS; i++) {
@@ -110,6 +113,7 @@ void controle_animacoes(char key) {
             animacao_seta(pio, sm);
             break;
         case '6': // Animação 7
+            quadrado_crescente(pio, sm);
             break;
          case '7': // Aciona a animação de onda alternada
             onda_alternada(pio, sm);
@@ -138,6 +142,7 @@ void controle_animacoes(char key) {
     }
 }
 
+
 // Padrão do coração ajustado para 5x5
 double coracao_pequeno[25] = {
     0, 0, 0, 0, 0,
@@ -162,6 +167,8 @@ double coracao_grande[25] = {
     0, 1, 1, 1, 0,
     0, 0, 1, 0, 0
 };
+
+
 // Função animacao_seta adicionada
 double seta[25] = {
     0, 0, 1, 0, 0,
@@ -178,6 +185,61 @@ double seta1[25] = {
     0, 1, 1, 1, 0,
     0, 0, 1, 0, 0
 };
+
+double quadrado_inicio[25] = {
+    0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0,
+    0, 0, 1, 0, 0,
+    0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0
+};
+double quadrado_medio[25] = {
+    0, 0, 0, 0, 0,
+    0, 1, 1, 1, 0,
+    0, 1, 0, 1, 0,
+    0, 1, 1, 1, 0,
+    0, 0, 0, 0, 0
+};
+double quadrado_grande[25] = {
+    1, 1, 1, 1, 1,
+    1, 0, 0, 0, 1,
+    1, 0, 0, 0, 1,
+    1, 0, 0, 0, 1,
+    1, 1, 1, 1, 1
+};
+
+void quadrado_crescente(PIO pio, uint sm) {
+    // Array de cores (R, G, B)
+    float cores[5][3] = {
+        {1.0, 0.0, 0.0}, // Vermelho
+        {0.0, 1.0, 0.0}, // Verde
+        {0.0, 0.0, 1.0}, // Azul
+        {1.0, 1.0, 0.0}, // Amarelo
+        {1.0, 0.0, 1.0}  // Magenta
+    };
+
+    
+    for(int quadrado = 0; quadrado < 5; quadrado++) {
+        // Seleciona a cor atual
+        float *cor_atual = cores[quadrado % 5];
+
+        // Crescimento do quadrado
+        desenho_pio(quadrado_inicio, pio, sm, cor_atual[0], cor_atual[1], cor_atual[2]);
+        sleep_ms(200);
+        desenho_pio(quadrado_medio, pio, sm, cor_atual[0], cor_atual[1], cor_atual[2]);
+        sleep_ms(200);
+        desenho_pio(quadrado_grande, pio, sm, cor_atual[0], cor_atual[1], cor_atual[2]);
+        sleep_ms(200);
+        
+        // Decaimento do quadrado
+        desenho_pio(quadrado_medio, pio, sm, cor_atual[0], cor_atual[1], cor_atual[2]);
+        sleep_ms(200);
+        desenho_pio(quadrado_inicio, pio, sm, cor_atual[0], cor_atual[1], cor_atual[2]);
+        sleep_ms(200);
+        
+       
+    }
+}
 
 void animacao_seta(PIO pio, uint sm) {
     float cores[5][3] = {
