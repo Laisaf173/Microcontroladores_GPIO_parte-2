@@ -1,0 +1,126 @@
+#include "pico/stdlib.h"
+#include "hardware/gpio.h"
+#include "hardware/timer.h"
+#include <stdio.h>
+
+// Pinos para a matriz de LEDs (5x5)
+#define NUM_ROWS 5
+#define NUM_COLS 5
+uint pins_rows[NUM_ROWS] = {2, 3, 4, 5, 6};
+uint pins_cols[NUM_COLS] = {7, 8, 9, 10, 11};
+
+// Pinos para o teclado matricial
+#define NUM_KEY_ROWS 4
+#define NUM_KEY_COLS 4
+uint key_rows[NUM_KEY_ROWS] = {12, 13, 14, 15};
+uint key_cols[NUM_KEY_COLS] = {16, 17, 18, 19};
+
+// Variáveis do jogo
+int ball_x = 2, ball_y = 2; // Posição inicial da bola
+int dx = 1, dy = 1;          // Direção da bola
+bool game_started = false;   // Flag para início do jogo
+
+// Inicializa os pinos da matriz de LEDs
+void init_led_matrix() {
+    for (int i = 0; i < NUM_ROWS; i++) {
+        gpio_init(pins_rows[i]);
+        gpio_set_dir(pins_rows[i], GPIO_OUT);
+    }
+    for (int i = 0; i < NUM_COLS; i++) {
+        gpio_init(pins_cols[i]);
+        gpio_set_dir(pins_cols[i], GPIO_OUT);
+    }
+}
+
+// Inicializa os pinos do teclado matricial
+void init_keypad() {
+    for (int i = 0; i < NUM_KEY_ROWS; i++) {
+        gpio_init(key_rows[i]);
+        gpio_set_dir(key_rows[i], GPIO_OUT);
+        gpio_put(key_rows[i], 0);
+    }
+    for (int i = 0; i < NUM_KEY_COLS; i++) {
+        gpio_init(key_cols[i]);
+        gpio_set_dir(key_cols[i], GPIO_IN);
+        gpio_pull_up(key_cols[i]);
+    }
+}
+
+// Verifica se a tecla "8" foi pressionada
+bool is_key_pressed_8() {
+    for (int i = 0; i < NUM_KEY_ROWS; i++) {
+        gpio_put(key_rows[i], 1);
+        for (int j = 0; j < NUM_KEY_COLS; j++) {
+            if (!gpio_get(key_cols[j])) {
+                gpio_put(key_rows[i], 0);
+                // Mapeia a posição (i, j) para a tecla "8"
+                if (i == 1 && j == 2) {
+                    return true;
+                }
+            }
+        }
+        gpio_put(key_rows[i], 0);
+    }
+    return false;
+}
+
+// Apaga todos os LEDs
+void clear_leds() {
+    for (int i = 0; i < NUM_ROWS; i++) {
+        gpio_put(pins_rows[i], 0);
+    }
+    for (int i = 0; i < NUM_COLS; i++) {
+        gpio_put(pins_cols[i], 1);
+    }
+}
+
+// Acende um LED específico na posição (x, y)
+void set_led(int x, int y) {
+    clear_leds();
+    gpio_put(pins_rows[y], 1);
+    gpio_put(pins_cols[x], 0);
+}
+
+// Move a bola automaticamente
+void move_ball() {
+    // Atualiza a posição da bola
+    ball_x += dx;
+    ball_y += dy;
+
+    // Verifica colisão com as bordas
+    if (ball_x < 0 || ball_x >= NUM_COLS) {
+        dx = -dx;
+        ball_x += dx;
+    }
+    if (ball_y < 0 || ball_y >= NUM_ROWS) {
+        dy = -dy;
+        ball_y += dy;
+    }
+
+    // Atualiza o LED da bola
+    set_led(ball_x, ball_y);
+}
+
+int main() {
+    stdio_init_all();
+    init_led_matrix();
+    init_keypad();
+    clear_leds();
+
+    // Aguarda a tecla "8" para iniciar o jogo
+    while (!is_key_pressed_8()) {
+        sleep_ms(100);
+    }
+
+    game_started = true;
+
+    // Loop principal do jogo
+    while (true) {
+        if (game_started) {
+            move_ball();
+            sleep_ms(200); // Controle da velocidade da bola
+        }
+    }
+
+    return 0;
+}
