@@ -9,6 +9,8 @@
 #include "animacoes.h"
 #include "hardware/clocks.h"
 
+
+
 //arquivo .pio
 #include "pio_matrix.pio.h"
 
@@ -70,6 +72,11 @@ void coracao_pulsante(PIO pio, uint sm);
 
 // Função para desenhar uma seta
 void animacao_seta(PIO pio, uint sm);
+// Função para criar padrão de círculo
+void criar_circulo(double *padrao, int raio);   
+
+// Função para desenhar o padrão de círculo no PIO  
+void desenhar_circulo(PIO pio, uint sm);    
 
 //funçao para acender os leds
 void acender_leds(double r, double g, double b) {
@@ -88,18 +95,20 @@ void controle_animacoes(char key) {
         case '1': // jogo da cobrinha
             animacao_cobrinha();
             break; 
-        case '2': // Animação 3
+        case '2': // círculo expandindo
+            desenhar_circulo(pio, sm);
             break;
         case '3': // Animação 4
             break;
         case '4': // Animação 5 
             break;
-        case '5': // Animação de seta
+        case '5': //  Animação de seta pulsante com mudança automática de cores
             animacao_seta(pio, sm);
             break;
         case '6': // Animação 7
             break;
-        case '7': // Animação 8
+         case '7': // Aciona a animação de onda alternada
+            onda_alternada(pio, sm);
             break;
         case 'A': // Desligar todos os LEDs
             acender_leds(0, 0, 0);
@@ -108,8 +117,10 @@ void controle_animacoes(char key) {
             acender_leds(0, 0, 1);
             break;
         case 'C': // Acionamento de todos os LEDs em vermelho - intensidade 80%
+            acender_leds(0.8, 0, 0);
             break;
         case 'D': // Acionamento de todos os LEDs em verde - intensidade 50%
+            acender_leds(0, 0.5, 0);
             break;
         case '#': // Acionamento de todos os LEDs em branco - intensidade 20%
             acender_leds(0.2, 0.2, 0.2);
@@ -147,7 +158,40 @@ double coracao_grande[25] = {
     0, 1, 1, 1, 0,
     0, 0, 1, 0, 0
 };
+// Função animacao_seta adicionada
+double seta[25] = {
+    0, 0, 1, 0, 0,
+    0, 1, 1, 1, 0,
+    1, 1, 1, 1, 1,
+    0, 0, 1, 0, 0,
+    0, 0, 1, 0, 0
+};
 
+double seta1[25] = {
+    0, 0, 1, 0, 0,
+    0, 0, 1, 0, 0,
+    1, 1, 1, 1, 1,
+    0, 1, 1, 1, 0,
+    0, 0, 1, 0, 0
+};
+
+void animacao_seta(PIO pio, uint sm) {
+    float cores[5][3] = {
+        {1.0, 0.0, 1.0}, 
+        {1.0, 0.0, 0.0}, 
+        {0.0, 1.0, 0.0},
+        {1.0, 1.0, 0.0}, 
+        {0.0, 0.0, 1.0}  
+    };
+    double *matriz[5] = {seta, seta1};
+    for(int i = 0; i < 25; i++) {
+        float *cor_atual = cores[i % 5];
+        for(int j = 0; j < 2; j++) {
+            desenho_pio(matriz[j], pio, sm, cor_atual[0], cor_atual[1], cor_atual[2]);
+            sleep_ms(200);
+        }
+    }
+}
 void coracao_pulsante(PIO pio, uint sm) {
     // Array de cores (R, G, B)
     float cores[5][3] = {
@@ -183,37 +227,58 @@ void coracao_pulsante(PIO pio, uint sm) {
     }
 }
 
-// Padrão de seta ajustado para 5x5
-double seta[25] = {
-    0, 0, 0, 1, 0,
-    0, 0, 1, 1, 0,
-    0, 1, 1, 1, 0,
-    1, 1, 1, 1, 0,
-    0, 0, 0, 1, 0
-};
-
-void animacao_seta(PIO pio, uint sm) {
-    
-    float cores[5][3] = {
-        {1.0, 1.0, 1.0}, 
-        {1.0, 0.8, 0.8}, 
-        {1.0, 0.6, 0.6}, 
-        {1.0, 0.4, 0.4}, 
-        {1.0, 0.0, 0.0}  
-    };
-
-    // Loop para mudar as cores automaticamente 5 vezes
-    for (int cycle = 0; cycle < 5; cycle++) {
-        for (int pulse = 0; pulse < 5; pulse++) {
-            // Seleciona a cor atual
-            float *cor_atual = cores[pulse];
-
-            // Desenho da seta com a cor atual
-            desenho_pio(seta, pio, sm, cor_atual[0], cor_atual[1], cor_atual[2]);
-            sleep_ms(100); // Pausa entre os pulsos
+// Função para criar padrão de círculo
+void criar_circulo(double *padrao, int raio) {
+    // Loop para percorrer a matriz 5x5
+    for (int i = 0; i < 5; i++) {
+        for (int j = 0; j < 5; j++) {
+            // Calcula a distância do centro (2,2) até a posição atual
+            int distancia = abs(i - 2) + abs(j - 2);
+            // Se a distância for menor ou igual ao raio, define o valor como 1.0 (círculo)
+            padrao[i * 5 + j] = (distancia <= raio) ? 1.0 : 0.0;
         }
     }
 }
+
+void desenhar_circulo(PIO pio, uint sm) {
+    // Define a matriz 5x5 para armazenar o padrão do círculo
+    double padrao_circulo[25] = {0};
+    // Define as cores para a animação
+    float cores[5][3] = {
+        {1.0, 0.0, 0.0}, // Vermelho
+        {0.0, 1.0, 0.0}, // Verde
+        {0.0, 0.0, 1.0}, // Azul
+        {1.0, 1.0, 0.0}, // Amarelo
+        {1.0, 0.0, 1.0}  // Magenta
+    };
+
+    // Loop para realizar a animação 5 vezes
+    for (int anim = 0; anim < 5; anim++) {
+        // Seleciona a cor atual para a animação
+        float *cor_atual = cores[anim % 5];
+
+        // Loop para aumentar o raio do círculo
+        for (int raio = 0; raio <= 2; raio++) {
+            // Cria o padrão do círculo com o raio atual
+            criar_circulo(padrao_circulo, raio);
+            // Desenha o padrão do círculo no PIO com a cor atual
+            desenho_pio(padrao_circulo, pio, sm, cor_atual[0], cor_atual[1], cor_atual[2]);
+            // Pausa por 100ms
+            sleep_ms(100);
+        }
+
+        // Loop para diminuir o raio do círculo
+        for (int raio = 2; raio >= 0; raio--) {
+            // Cria o padrão do círculo com o raio atual
+            criar_circulo(padrao_circulo, raio);
+            // Desenha o padrão do círculo no PIO com a cor atual
+            desenho_pio(padrao_circulo, pio, sm, cor_atual[0], cor_atual[1], cor_atual[2]);
+            // Pausa por 100ms
+            sleep_ms(100);
+        }
+    }
+}
+
 
 int main() {
     pio = pio0; 
