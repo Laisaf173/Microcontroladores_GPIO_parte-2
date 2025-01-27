@@ -98,8 +98,10 @@ void controle_animacoes(char key) {
         case '2': // círculo expandindo
             desenhar_circulo(pio, sm);
             break;
-        case '3': // Animação 4
-            break;
+    case '3': // Animação espiral
+    espiral_animacao(pio, sm);
+    break;
+
         case '4': // Animação 5 
             break;
         case '5': //  Animação de seta pulsante com mudança automática de cores
@@ -375,3 +377,46 @@ void desenho_pio(double *dados, PIO pio, uint sm, double vr, double vg, double v
         pio_sm_put_blocking(pio, sm, cor);
     }
 }
+
+void espiral_animacao(PIO pio, uint sm) {
+    // Ordem correta para formar uma espiral
+    int ordem_espiral[25] = {
+        0, 1, 2, 3, 4,
+        9, 14, 19, 24,
+        23, 22, 21, 20,
+        15, 10, 5,
+        6, 7, 8,
+        13, 18,
+        17, 16,
+        11, 12
+    };
+
+    // Array de cores para a animação
+    float cores[5][3] = {
+        {1.0, 0.0, 0.0}, // Vermelho
+        {0.0, 1.0, 0.0}, // Verde
+        {0.0, 0.0, 1.0}, // Azul
+        {1.0, 1.0, 0.0}, // Amarelo
+        {1.0, 0.0, 1.0}  // Magenta
+    };
+
+    // Executa a animação 3 vezes
+    for (int loop = 0; loop < 3; loop++) {
+        // Seleciona a cor atual
+        float *cor_atual = cores[loop % 5];
+
+        // Liga os LEDs na ordem da espiral
+        for (int i = 0; i < 25; i++) {
+            double padrao[25] = {0};
+            padrao[ordem_espiral[i]] = 1.0; // Ativa o LED correspondente
+            desenho_pio(padrao, pio, sm, cor_atual[0], cor_atual[1], cor_atual[2]);
+            sleep_ms(100); // Pausa entre os LEDs
+        }
+
+        // Apaga todos os LEDs lentamente
+        double padrao_apagar[25] = {0};
+        desenho_pio(padrao_apagar, pio, sm, 0, 0, 0);
+        sleep_ms(300);
+    }
+}
+
