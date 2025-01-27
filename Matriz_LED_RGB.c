@@ -101,7 +101,8 @@ void controle_animacoes(char key) {
             break;
         case '4': // Animação 5 
             break;
-        case '5': // Animação 6
+        case '5': //  Animação de seta pulsante com mudança automática de cores
+            animacao_seta(pio, sm);
             break;
         case '6': // Animação 7
             break;
@@ -155,7 +156,40 @@ double coracao_grande[25] = {
     0, 1, 1, 1, 0,
     0, 0, 1, 0, 0
 };
+// Função animacao_seta adicionada
+double seta[25] = {
+    0, 0, 1, 0, 0,
+    0, 1, 1, 1, 0,
+    1, 1, 1, 1, 1,
+    0, 0, 1, 0, 0,
+    0, 0, 1, 0, 0
+};
 
+double seta1[25] = {
+    0, 0, 1, 0, 0,
+    0, 0, 1, 0, 0,
+    1, 1, 1, 1, 1,
+    0, 1, 1, 1, 0,
+    0, 0, 1, 0, 0
+};
+
+void animacao_seta(PIO pio, uint sm) {
+    float cores[5][3] = {
+        {1.0, 0.0, 1.0}, 
+        {1.0, 0.0, 0.0}, 
+        {0.0, 1.0, 0.0},
+        {1.0, 1.0, 0.0}, 
+        {0.0, 0.0, 1.0}  
+    };
+    double *matriz[5] = {seta, seta1};
+    for(int i = 0; i < 25; i++) {
+        float *cor_atual = cores[i % 5];
+        for(int j = 0; j < 2; j++) {
+            desenho_pio(matriz[j], pio, sm, cor_atual[0], cor_atual[1], cor_atual[2]);
+            sleep_ms(200);
+        }
+    }
+}
 void coracao_pulsante(PIO pio, uint sm) {
     // Array de cores (R, G, B)
     float cores[5][3] = {
