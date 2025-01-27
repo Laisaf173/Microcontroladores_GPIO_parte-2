@@ -101,7 +101,8 @@ void controle_animacoes(char key) {
             break;
         case '4': // Animação 5 
             break;
-        case '5': // Animação 6
+        case '5': //  Animação de seta pulsante com mudança automática de cores
+            animacao_seta(pio, sm);
             break;
         case '6': // Animação 7
             break;
@@ -241,6 +242,65 @@ void desenhar_circulo(PIO pio, uint sm) {
         }
     }
 }
+void animacao_seta(PIO pio, uint sm) {
+    
+    float cores[5][3] = {
+        {1.0, 1.0, 1.0}, 
+        {1.0, 0.8, 0.8}, 
+        {1.0, 0.6, 0.6}, 
+        {1.0, 0.4, 0.4}, 
+        {1.0, 0.0, 0.0} 
+    };
+
+    // Padrão de seta ajustado para 5x5
+    int seta[5][5] = {
+        {0, 0, 0, 1, 0},
+        {0, 0, 1, 1, 0},
+        {0, 1, 1, 1, 0},
+        {1, 1, 1, 1, 0},
+        {0, 0, 0, 1, 0}
+    };
+
+    // Posições para mover a seta dentro da matriz 5x5
+    int posicoes[5][2] = {
+        {0, 0}, {0, 1}, {0, 2}, {1, 0}, {1, 1}
+    };
+
+    // Loop para mudar as cores e posições automaticamente 5 vezes
+    for (int cycle = 0; cycle < 5; cycle++) {
+        for (int pulse = 0; pulse < 5; pulse++) {
+            // Seleciona a cor atual
+            float *cor_atual = cores[pulse];
+
+            // Limpa a matriz antes de desenhar a seta
+            int matriz[5][5] = {0};
+
+            // Posição atual da seta
+            int linha_inicio = posicoes[cycle][0];
+            int coluna_inicio = posicoes[cycle][1];
+
+            // Desenha a seta na posição atual
+            for (int i = 0; i < 5; i++) {
+                for (int j = 0; j < 5; j++) {
+                    if (seta[i][j] == 1) {
+                        int linha = linha_inicio + i;
+                        int coluna = coluna_inicio + j;
+                        if (linha < 5 && coluna < 5) { // Verifica limites
+                            matriz[linha][coluna] = 1;
+                        }
+                    }
+                }
+            }
+
+            // Desenho da seta com a cor e posição atual
+            desenho_pio(matriz, pio, sm, cor_atual[0], cor_atual[1], cor_atual[2]);
+            sleep_ms(500); // Pausa entre os pulsos
+        }
+    }
+}
+
+
+
 
 
 int main() {
