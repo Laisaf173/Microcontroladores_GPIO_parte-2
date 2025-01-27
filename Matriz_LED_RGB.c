@@ -97,8 +97,9 @@ void controle_animacoes(char key) {
         case '2': // círculo expandindo
             desenhar_circulo(pio, sm);
             break;
-        case '3': // Animação 4
-            break;
+        case '3': // Animação espiral
+            espiral_animacao(pio, sm);
+             break;
         case '4': // Animação 5 
             break;
         case '5': // Animação 6
@@ -340,4 +341,51 @@ void desenho_pio(double *dados, PIO pio, uint sm, double vr, double vg, double v
         pio_sm_put_blocking(pio, sm, cor);
     }
 }
+
+void espiral_animacao(PIO pio, uint sm) {
+    // Ordem dos LEDs em formato espiral para a matriz 5x5
+    int ordem_espiral[25] = {
+        12, 7, 8, 9, 14, 
+        13, 18, 23, 22, 21, 
+        16, 11, 6, 1, 0, 
+        5, 10, 15, 20, 19, 
+        24, 17, 2, 3, 4
+    };
+
+    // Array de cores para a animação
+    float cores[5][3] = {
+        {1.0, 0.0, 0.0}, // Vermelho
+        {0.0, 1.0, 0.0}, // Verde
+        {0.0, 0.0, 1.0}, // Azul
+        {1.0, 1.0, 0.0}, // Amarelo
+        {1.0, 0.0, 1.0}  // Magenta
+    };
+
+    // Loop para executar a animação 3 vezes
+    for (int loop = 0; loop < 3; loop++) {
+        // Cor da iteração atual
+        float *cor_atual = cores[loop % 5];
+
+        // Liga os LEDs na ordem da espiral
+        for (int i = 0; i < 25; i++) {
+            double padrao[25] = {0};
+            padrao[ordem_espiral[i]] = 1.0; // Ativa o LED da posição da espiral
+
+            // Envia o padrão para a matriz
+            desenho_pio(padrao, pio, sm, cor_atual[0], cor_atual[1], cor_atual[2]);
+            sleep_ms(100); // Pausa entre as ativações
+        }
+
+        // Apaga os LEDs em ordem reversa
+        for (int i = 24; i >= 0; i--) {
+            double padrao[25] = {0};
+            padrao[ordem_espiral[i]] = 1.0;
+
+            // Envia o padrão para a matriz com intensidade menor
+            desenho_pio(padrao, pio, sm, cor_atual[0] * 0.5, cor_atual[1] * 0.5, cor_atual[2] * 0.5);
+            sleep_ms(100);
+        }
+    }
+}
+
 
