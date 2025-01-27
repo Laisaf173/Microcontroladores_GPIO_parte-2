@@ -98,6 +98,7 @@ void controle_animacoes(char key) {
             desenhar_circulo(pio, sm);
             break;
         case '3': // Animação 4
+            animacao_espiral(pio, sm);
             break;
         case '4': // Animação 5 
             break;
