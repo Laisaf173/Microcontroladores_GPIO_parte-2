@@ -118,6 +118,7 @@ void controle_animacoes(char key) {
             acender_leds(0.8, 0, 0);
             break;
         case 'D': // Acionamento de todos os LEDs em verde - intensidade 50%
+            acender_leds(0, 0.5, 0);
             break;
         case '#': // Acionamento de todos os LEDs em branco - intensidade 20%
             break;
