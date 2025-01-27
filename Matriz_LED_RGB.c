@@ -82,7 +82,7 @@ void desenhar_circulo(PIO pio, uint sm);
 void espiral_animacao(PIO pio, uint sm);
 
 //Função quadrado crescente
-void quadrado_crescente(PIO pio, uint sm);
+void quadrado_crescente(PIO pio, uint sm);
 
 //funçao para acender os leds
 void acender_leds(double r, double g, double b) {
@@ -113,7 +113,7 @@ void controle_animacoes(char key) {
             animacao_seta(pio, sm);
             break;
         case '6': // Animação 7
-            quadrado_crescente(pio, sm);
+            quadrado_crescente(pio, sm);
             break;
          case '7': // Aciona a animação de onda alternada
             onda_alternada(pio, sm);
