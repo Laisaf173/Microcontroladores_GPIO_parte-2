@@ -101,7 +101,8 @@ void controle_animacoes(char key) {
             break;
         case '4': // Animação 5 
             break;
-        case '5': // Animação 6
+        case '5': // Animação da seta
+            animacao_seta(pio, sm);
             break;
         case '6': // Animação 7
             break;
@@ -238,6 +239,59 @@ void desenhar_circulo(PIO pio, uint sm) {
             desenho_pio(padrao_circulo, pio, sm, cor_atual[0], cor_atual[1], cor_atual[2]);
             // Pausa por 100ms
             sleep_ms(100);
+        }
+    }
+}
+void animacao_seta(PIO pio, uint sm) {
+
+    float cores[5][3] = {
+        {1.0, 1.0, 1.0}, 
+        {1.0, 0.8, 0.8}, 
+        {1.0, 0.6, 0.6},
+        {1.0, 0.4, 0.4}, 
+        {1.0, 0.0, 0.0}  
+    };
+
+    
+    double seta[25] = {
+        0, 0, 0, 1, 0,
+        0, 0, 1, 1, 0,
+        0, 1, 1, 1, 0,
+        1, 1, 1, 1, 0,
+        0, 0, 0, 1, 0
+    };
+
+    // Posições para mover a seta dentro da matriz 5x5
+    int posicoes[5][2] = {
+        {0, 0}, {0, 2}, {2, 0}, {2, 2}, {4, 0}
+    };
+
+    // Loop para mudar as cores e posições automaticamente 5 vezes
+    for (int cycle = 0; cycle < 5; cycle++) {
+        for (int pulse = 0; pulse < 5; pulse++) {
+            // Seleciona a cor atual
+            float *cor_atual = cores[pulse];
+
+            // Limpa a matriz antes de desenhar a seta
+            double matriz[25] = {0};
+
+            // Posição atual da seta
+            int linha = posicoes[cycle][0];
+            int coluna = posicoes[cycle][1];
+
+            // Desenha a seta na posição atual
+            for (int i = 0; i < 5; i++) {
+                for (int j = 0; j < 5; j++) {
+                    int index = (linha + i) * 5 + (coluna + j);
+                    if (index < 25) {
+                        matriz[index] = seta[i * 5 + j];
+                    }
+                }
+            }
+
+            // Desenho da seta com a cor e posição atual
+            desenho_pio(matriz, pio, sm, cor_atual[0], cor_atual[1], cor_atual[2]);
+            sleep_ms(500); // Pausa entre os pulsos
         }
     }
 }
