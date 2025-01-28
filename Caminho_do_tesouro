@@ -1,0 +1,87 @@
+#include "pico/stdlib.h"
+#include <stdio.h>
+#include "hardware/pio.h"
+#include "hardware/clocks.h"
+#include "pio_matrix.pio.h"
+
+#define NUM_LEDS 25
+#define OUT_PIN 7
+
+// Mapeamento físico dos LEDs
+int PHYSICAL_LEDS_MAPPER[25] = {
+    24, 23, 22, 21, 20,
+    15, 16, 17, 18, 19,
+    14, 13, 12, 11, 10,
+    5, 6, 7, 8, 9,
+    4, 3, 2, 1, 0
+};
+
+// Gera o valor RGB para o LED
+uint32_t matrix_rgb(float r, float g, float b) {
+    unsigned char R = r * 255, G = g * 255, B = b * 255;
+    return (G << 24) | (R << 16) | (B << 8);
+}
+
+// Envia o desenho animado para os LEDs
+void desenho_pio_anim(double *desenho, PIO pio, uint sm, double r, double g, double b) {
+    for (int i = 0; i < NUM_LEDS; i++) {
+        int led_matrix_location = PHYSICAL_LEDS_MAPPER[i];
+        uint32_t valor_led = matrix_rgb(desenho[led_matrix_location] * r, desenho[led_matrix_location] * g, desenho[led_matrix_location] * b);
+        pio_sm_put_blocking(pio, sm, valor_led);
+    }
+}
+
+// Animação de rotação em sentido horário
+void clockwise_rotation_ani(PIO pio, uint sm) {
+    double arrow_right[25] = {0};
+    arrow_right[2] = arrow_right[8] = arrow_right[10] = arrow_right[18] = arrow_right[22] = 1.0;
+    arrow_right[11] = arrow_right[12] = arrow_right[13] = arrow_right[14] = 1.0;
+
+    double arrow_down[25] = {0};
+    arrow_down[2] = arrow_down[7] = arrow_down[12] = arrow_down[17] = arrow_down[22] = 1.0;
+    arrow_down[16] = arrow_down[14] = arrow_down[10] = arrow_down[18] = 1.0;
+
+    double arrow_left[25] = {0};
+    arrow_left[2] = arrow_left[6] = arrow_left[10] = arrow_left[16] = arrow_left[22] = 1.0;
+    arrow_left[11] = arrow_left[12] = arrow_left[13] = arrow_left[14] = 1.0;
+
+    double arrow_up[25] = {0};
+    arrow_up[2] = arrow_up[6] = arrow_up[12] = arrow_up[17] = arrow_up[22] = 1.0;
+    arrow_up[14] = arrow_up[8] = arrow_up[6] = arrow_up[10] = arrow_up[7] = 1.0;
+
+    double x_shape[25] = {0};
+    x_shape[0] = x_shape[4] = x_shape[6] = x_shape[8] = x_shape[12] = x_shape[16] = x_shape[18] = x_shape[20] = x_shape[24] = 1.0;
+
+    double *arrows[4] = {arrow_right, arrow_down, arrow_left, arrow_up};
+
+    // Ciclo de animação
+    for (int frame = 0; frame < 4; frame++) {
+        desenho_pio_anim(arrows[frame], pio, sm, 1, 0, 0); // Vermelho para as setas
+        sleep_ms(1000); // Tempo para visualizar a seta
+        
+    }
+
+    // Exibe o "X"
+    desenho_pio_anim(x_shape, pio, sm, 0, 0, 1); // Azul para o "X"
+    sleep_ms(2000); // Tempo para visualizar o "X"
+}
+
+int main() {
+    // Configuração inicial
+    stdio_init_all();
+
+    // Inicialização do PIO e do programa
+    PIO pio = pio0;
+    uint sm = pio_claim_unused_sm(pio, true);
+    uint offset = pio_add_program(pio, &pio_matrix_program);
+    pio_matrix_program_init(pio, sm, offset, OUT_PIN);
+
+    printf("Iniciando a animação de rotação e 'X'...\n");
+
+    // Executa a animação
+    while (true) {
+        clockwise_rotation_ani(pio, sm);
+    }
+
+    return 0;
+}
