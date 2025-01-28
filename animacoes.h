@@ -13,6 +13,7 @@ extern uint32_t sm;
 void animacao_cobrinha();
 void desenha_frame();
 void onda_alternada();
+void caminho_tesouro();
 
 // Funçao de outras animacoes devem ser adicionadas aqui
 

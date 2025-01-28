@@ -107,7 +107,8 @@ void controle_animacoes(char key) {
         case '3': // Animação espiral
             espiral_animacao(pio, sm);
             break;
-        case '4': // Animação 5 
+        case '4': // Caminho do Tesouro
+            caminho_tesouro(pio, sm); 
             break;
         case '5': //  Animação de seta pulsante com mudança automática de cores
             animacao_seta(pio, sm);
